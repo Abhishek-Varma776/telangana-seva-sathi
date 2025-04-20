@@ -11,19 +11,19 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <img src="/telangana-logo.png" alt="Telangana Logo" className="h-12 w-auto" />
             <div>
-              <h1 className="text-xl font-bold font-poppins">तेलंगाना सेवा साथी</h1>
+              <h1 className="text-xl font-bold font-poppins">తెలంగాణ సేవా సాథి</h1>
               <p className="text-sm">Telangana Seva Sathi</p>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
             <Link to="/citizen-login">
-              <Button variant="outline" className="text-white border-white hover:bg-govt-blue">
+              <Button variant="outline" className="text-white border-white hover:bg-govt-blue hover:scale-105 transition-all">
                 Citizen Login
               </Button>
             </Link>
             <Link to="/officer-login">
-              <Button variant="outline" className="text-white border-white hover:bg-govt-blue">
+              <Button variant="outline" className="text-white border-white hover:bg-govt-blue hover:scale-105 transition-all">
                 Officer Login
               </Button>
             </Link>
