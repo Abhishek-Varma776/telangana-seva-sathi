@@ -18,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+            fontFamily: {
+                'poppins': ['Poppins', 'sans-serif'],
+            },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -28,6 +31,14 @@ export default {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
+                govt: {
+                    orange: '#FF6B35',
+                    blue: '#0A5F91',
+                    lightblue: '#0FA0CE',
+                    darkblue: '#04395E',
+                    gray: '#8E9196',
+                    lightgray: '#F1F1F1',
+                },
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
