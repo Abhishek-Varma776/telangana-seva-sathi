@@ -74,9 +74,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Feedback methods
     async submitFeedback(feedbackData) {
       return await this.fetchApi('submit_feedback.php', 'POST', feedbackData);
+    },
+    
+    // Area issues methods
+    async getAreaIssues(area) {
+      return await this.fetchApi(`get_area_issues.php?area=${encodeURIComponent(area)}`);
+    },
+    
+    // Special method for file uploads that need FormData
+    async uploadWithFormData(endpoint, formData) {
+      try {
+        const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+        
+        return await response.json();
+      } catch (error) {
+        console.error('Upload API Error:', error);
+        return { status: 'error', message: 'Network error during file upload. Please try again.' };
+      }
     }
   };
 
   // Export to window for global access
   window.apiConnect = window.apiConnect;
+  
+  console.log("API Bridge initialized successfully");
 });

@@ -18,12 +18,12 @@ const Navbar = () => {
           
           <div className="flex items-center gap-4">
             <Link to="/citizen-login">
-              <Button variant="outline" className="text-white border-white hover:bg-govt-blue hover:scale-105 transition-all">
+              <Button variant="default" className="bg-govt-orange text-white hover:bg-opacity-90 hover:scale-105 transition-all">
                 Citizen Login
               </Button>
             </Link>
             <Link to="/officer-login">
-              <Button variant="outline" className="text-white border-white hover:bg-govt-blue hover:scale-105 transition-all">
+              <Button variant="default" className="bg-govt-orange text-white hover:bg-opacity-90 hover:scale-105 transition-all">
                 Officer Login
               </Button>
             </Link>

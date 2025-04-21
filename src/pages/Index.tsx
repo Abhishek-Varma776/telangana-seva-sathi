@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
+import AreaSelector from "@/components/AreaSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -29,7 +30,7 @@ const Index = () => {
               How It Works
             </h2>
             <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-              Telangana Seva Sathi provides a simple and efficient way for citizens to register complaints
+              తెలంగాణ సేవా సాథి provides a simple and efficient way for citizens to register complaints
               and for officers to resolve them within 7 working days.
             </p>
             
@@ -56,6 +57,14 @@ const Index = () => {
         </section>
         
         <ServicesSection />
+
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-lg mx-auto">
+              <AreaSelector />
+            </div>
+          </div>
+        </section>
         
         <section className="py-16 bg-govt-blue text-white">
           <div className="container mx-auto px-4">
@@ -84,7 +93,7 @@ const Index = () => {
                 <CardContent className="space-y-4">
                   <p className="text-gray-600">Register and file complaints about public services in your area.</p>
                   <Link to="/citizen-register">
-                    <Button className="w-full bg-govt-orange hover:bg-opacity-90">Register as Citizen</Button>
+                    <Button className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all">Register as Citizen</Button>
                   </Link>
                   <p className="text-sm text-gray-500">Already registered?{" "}
                     <Link to="/citizen-login" className="text-govt-blue hover:underline">Login here</Link>
@@ -99,7 +108,7 @@ const Index = () => {
                 <CardContent className="space-y-4">
                   <p className="text-gray-600">Access and resolve complaints assigned to your department.</p>
                   <Link to="/officer-register">
-                    <Button className="w-full bg-govt-darkblue hover:bg-opacity-90">Register as Officer</Button>
+                    <Button className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all">Register as Officer</Button>
                   </Link>
                   <p className="text-sm text-gray-500">Already registered?{" "}
                     <Link to="/officer-login" className="text-govt-blue hover:underline">Login here</Link>

@@ -1,37 +1,40 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { Droplet, CircleDashed, Lightbulb, Trash2, ShieldCheck } from "lucide-react";
 
 const services = [
   {
-    title: "Municipal Issues",
-    description: "Report issues related to roads, drainage, streetlights, garbage collection, etc.",
-    icon: "🏙️"
+    title: "Drainage Issues",
+    description: "Report blockage, overflow or damage in drainage systems across your area.",
+    icon: <Droplet className="w-10 h-10 text-govt-blue" />,
+    path: "/issue/drainage"
   },
   {
-    title: "Water Supply",
-    description: "Report problems related to water supply, leakages, and water quality issues.",
-    icon: "💧"
+    title: "Potholes",
+    description: "Report potholes, road damages, or other road infrastructure issues.",
+    icon: <CircleDashed className="w-10 h-10 text-govt-blue" />,
+    path: "/issue/potholes"
   },
   {
-    title: "Electricity",
-    description: "File complaints regarding power outages, voltage issues, or damaged electrical infrastructure.",
-    icon: "⚡"
+    title: "Streetlight",
+    description: "Report non-functioning streetlights, damaged poles, or areas needing new lighting.",
+    icon: <Lightbulb className="w-10 h-10 text-govt-blue" />,
+    path: "/issue/streetlight"
   },
   {
-    title: "Public Transport",
-    description: "Report issues with public transportation services, bus stops, and related infrastructure.",
-    icon: "🚌"
+    title: "Garbage Collection",
+    description: "Report uncollected garbage, waste management issues or need for waste bins.",
+    icon: <Trash2 className="w-10 h-10 text-govt-blue" />,
+    path: "/issue/garbage"
   },
   {
-    title: "Health & Sanitation",
-    description: "Raise concerns about public health facilities and sanitation issues in your area.",
-    icon: "🏥"
-  },
-  {
-    title: "Education",
-    description: "Report issues related to government educational institutions and facilities.",
-    icon: "🎓"
+    title: "Public Safety",
+    description: "Report safety concerns in public areas, damaged public property or security issues.",
+    icon: <ShieldCheck className="w-10 h-10 text-govt-blue" />,
+    path: "/issue/safety"
   }
 ];
 
@@ -40,18 +43,23 @@ const ServicesSection = () => {
     <section className="py-16 bg-govt-lightgray">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 text-govt-darkblue font-poppins">
-          Our Services
+          Report Issues
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <CardTitle className="text-govt-blue">{service.title}</CardTitle>
+                <div className="mb-4 flex justify-center">{service.icon}</div>
+                <CardTitle className="text-govt-blue text-center">{service.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-gray-600">{service.description}</CardDescription>
+                <CardDescription className="text-gray-600 mb-4">{service.description}</CardDescription>
+                <Link to={service.path}>
+                  <Button className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all">
+                    Report Issue
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

@@ -13,6 +13,14 @@ import OfficerDashboard from "./pages/OfficerDashboard";
 import TrackComplaint from "./pages/TrackComplaint";
 import { useEffect } from "react";
 
+// Import new issue pages
+import DrainageIssue from "./pages/DrainageIssue";
+import PotholesIssue from "./pages/PotholesIssue";
+import StreetlightIssue from "./pages/StreetlightIssue";
+import GarbageIssue from "./pages/GarbageIssue";
+import SafetyIssue from "./pages/SafetyIssue";
+import AreaIssues from "./pages/AreaIssues";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -40,6 +48,15 @@ const App = () => {
             <Route path="/citizen-dashboard" element={<CitizenDashboard />} />
             <Route path="/officer-dashboard" element={<OfficerDashboard />} />
             <Route path="/track-complaint" element={<TrackComplaint />} />
+            
+            {/* New issue routes */}
+            <Route path="/issue/drainage" element={<DrainageIssue />} />
+            <Route path="/issue/potholes" element={<PotholesIssue />} />
+            <Route path="/issue/streetlight" element={<StreetlightIssue />} />
+            <Route path="/issue/garbage" element={<GarbageIssue />} />
+            <Route path="/issue/safety" element={<SafetyIssue />} />
+            <Route path="/area-issues" element={<AreaIssues />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

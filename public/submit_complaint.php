@@ -25,7 +25,7 @@ $citizen_id = $_SESSION['citizen_id'];
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Check if all required fields are present
-$requiredFields = ['subject', 'description', 'department', 'area', 'address', 'pincode'];
+$requiredFields = ['subject', 'description', 'department', 'area', 'address'];
 foreach ($requiredFields as $field) {
     if (!isset($data[$field]) || empty($data[$field])) {
         echo json_encode(['status' => 'error', 'message' => "Missing required field: $field"]);
@@ -39,25 +39,63 @@ $description = sanitizeInput($data['description']);
 $department = sanitizeInput($data['department']);
 $area = sanitizeInput($data['area']);
 $address = sanitizeInput($data['address']);
-$pincode = sanitizeInput($data['pincode']);
+$pincode = isset($data['pincode']) ? sanitizeInput($data['pincode']) : '';
 
-// Generate unique complaint ID (Year-Month-Random5digits)
-$complaint_id = 'TS-' . date('Ym') . '-' . rand(10000, 99999);
+// Generate unique complaint ID (Area-Department-Year-Month-Random5digits)
+$complaint_id = strtoupper(substr($area, 0, 3)) . '-' . strtoupper(substr($department, 0, 3)) . '-' . date('Ym') . '-' . rand(10000, 99999);
+
+// Get the appropriate officer ID for this department and area
+$officer_id = null;
+$officerSql = "SELECT id FROM officers WHERE department = ? AND district = ? LIMIT 1";
+$officerStmt = $conn->prepare($officerSql);
+$officerStmt->bind_param("ss", $department, $area);
+$officerStmt->execute();
+$officerStmt->bind_result($officer_id);
+$officerStmt->fetch();
+$officerStmt->close();
 
 // Prepare SQL statement
-$sql = "INSERT INTO complaints (complaint_id, citizen_id, subject, description, department, area, address, pincode, created_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+$sql = "INSERT INTO complaints (complaint_id, citizen_id, subject, description, department, area, address, pincode, officer_id, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
 // Prepare statement
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sissssss", $complaint_id, $citizen_id, $subject, $description, $department, $area, $address, $pincode);
+$stmt->bind_param("sissssssi", $complaint_id, $citizen_id, $subject, $description, $department, $area, $address, $pincode, $officer_id);
 
 // Execute statement
 if ($stmt->execute()) {
+    // Handle image upload if exists
+    $hasImage = false;
+    
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = 'uploads/';
+        
+        // Create directory if it doesn't exist
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+        
+        $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+        $newFileName = $complaint_id . '.' . $fileExtension;
+        $uploadFile = $upload_dir . $newFileName;
+        
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
+            // Update the complaint with the image path
+            $updateSql = "UPDATE complaints SET image_path = ? WHERE complaint_id = ?";
+            $updateStmt = $conn->prepare($updateSql);
+            $updateStmt->bind_param("ss", $uploadFile, $complaint_id);
+            $updateStmt->execute();
+            $updateStmt->close();
+            $hasImage = true;
+        }
+    }
+    
     echo json_encode([
         'status' => 'success', 
         'message' => 'Complaint submitted successfully',
-        'complaint_id' => $complaint_id
+        'complaint_id' => $complaint_id,
+        'has_image' => $hasImage,
+        'assigned_to_officer' => $officer_id !== null
     ]);
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Failed to submit complaint: ' . $stmt->error]);
