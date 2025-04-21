@@ -25,7 +25,7 @@ const HeroSection = () => {
                 </Button>
               </Link>
               <Link to="/track-complaint">
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-govt-blue hover:scale-105 transition-all">
+                <Button className="bg-govt-orange text-white hover:bg-opacity-90 hover:scale-105 transition-all">
                   Track Complaint
                 </Button>
               </Link>
