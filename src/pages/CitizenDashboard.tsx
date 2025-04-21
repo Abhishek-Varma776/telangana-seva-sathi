@@ -6,6 +6,8 @@ import ComplaintForm from "@/components/dashboard/ComplaintForm";
 import ComplaintsList from "@/components/dashboard/ComplaintsList";
 import ComplaintDetails from "@/components/dashboard/ComplaintDetails";
 import FeedbackForm from "@/components/dashboard/FeedbackForm";
+import ServicesSection from "@/components/ServicesSection";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Mock data for complaints
 const mockComplaints = [
@@ -99,12 +101,21 @@ const CitizenDashboard = () => {
       
       <main className="flex-grow py-8 bg-govt-lightgray">
         <div className="container mx-auto px-4">
-          <Tabs defaultValue="file-complaint" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+          <Tabs defaultValue="services" className="space-y-8">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="services">Report Issues</TabsTrigger>
               <TabsTrigger value="file-complaint">File a Complaint</TabsTrigger>
               <TabsTrigger value="my-complaints">My Complaints</TabsTrigger>
               <TabsTrigger value="feedback">Feedback</TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="services">
+              <Card>
+                <CardContent className="pt-6">
+                  <ServicesSection />
+                </CardContent>
+              </Card>
+            </TabsContent>
             
             <TabsContent value="file-complaint">
               <ComplaintForm
