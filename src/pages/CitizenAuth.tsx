@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NewComplaintBlock from "@/components/NewComplaintBlock";
+import GovernmentIssuesBlock from "@/components/GovernmentIssuesBlock";
 
 const CitizenAuth = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const CitizenAuth = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow py-12 flex flex-col items-center justify-center bg-govt-lightgray">
-        <NewComplaintBlock />
+        <GovernmentIssuesBlock />
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">

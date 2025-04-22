@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import NewComplaintBlock from "@/components/NewComplaintBlock";
+import GovernmentIssuesBlock from "@/components/GovernmentIssuesBlock";
 
 const Index = () => {
   const stats = [
@@ -24,7 +25,7 @@ const Index = () => {
       <main className="flex-grow">
         <HeroSection />
         
-        <NewComplaintBlock />
+        <GovernmentIssuesBlock />
 
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
