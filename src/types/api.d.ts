@@ -11,6 +11,7 @@ interface ApiConnect {
   getOfficerComplaints: () => Promise<any>;
   updateComplaintStatus: (complaintId: number | string, status: string, remarks: string) => Promise<any>;
   submitFeedback: (feedbackData: any) => Promise<any>;
+  getAreaIssues: (area: string) => Promise<any>;
 }
 
 interface Window {

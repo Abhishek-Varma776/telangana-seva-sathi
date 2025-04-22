@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -6,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Droplet, CircleDashed, Lightbulb, Trash2, ShieldCheck, MapPin } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface AreaIssue {
   department: string;
@@ -69,6 +69,7 @@ const AreaIssues = () => {
   const [issues, setIssues] = useState<AreaIssue[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!area) {
@@ -111,7 +112,11 @@ const AreaIssues = () => {
     // Check if user is logged in
     const userCheck = sessionStorage.getItem("userType");
     if (!userCheck) {
-      toast.error("Please login to report an issue");
+      toast({
+        title: "Authentication Required",
+        description: "Please login to report an issue",
+        variant: "destructive"
+      });
       // Store the intended destination to redirect back after login
       sessionStorage.setItem("redirectAfterLogin", `/issue/${department}`);
       navigate("/citizen-login");
