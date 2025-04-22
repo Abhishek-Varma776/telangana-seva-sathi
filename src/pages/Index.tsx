@@ -1,4 +1,3 @@
-
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,6 +7,7 @@ import AreaSelector from "@/components/AreaSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import NewComplaintBlock from "@/components/NewComplaintBlock";
 
 const Index = () => {
   const stats = [
@@ -24,6 +24,8 @@ const Index = () => {
       <main className="flex-grow">
         <HeroSection />
         
+        <NewComplaintBlock />
+
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-4 text-govt-darkblue font-poppins">
