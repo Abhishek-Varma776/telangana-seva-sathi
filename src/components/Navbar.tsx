@@ -8,13 +8,13 @@ const Navbar = () => {
     <nav className="bg-govt-darkblue text-white shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <img src="/telangana-logo.png" alt="Telangana Logo" className="h-12 w-auto" />
             <div>
               <h1 className="text-xl font-bold font-poppins">తెలంగాణ సేవా సాథి</h1>
               <p className="text-sm">Telangana Seva Sathi</p>
             </div>
-          </div>
+          </Link>
           
           <div className="flex items-center gap-4">
             <Link to="/citizen-login">

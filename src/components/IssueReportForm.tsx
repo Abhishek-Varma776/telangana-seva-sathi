@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,9 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ issueType, issueTitle
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showMap, setShowMap] = useState<boolean>(false);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -47,6 +50,28 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ issueType, issueTitle
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCameraCapture = () => {
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
+    }
+  };
+
+  const handleFileUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const toggleMap = () => {
+    setShowMap(!showMap);
+  };
+
+  const handleLocationSelect = (location: string) => {
+    setLandmark(location);
+    setShowMap(false);
+    toast.success("Location selected");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +110,7 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ issueType, issueTitle
       
       // Submit the complaint through the API bridge
       const complaintData = {
-        subject: `${issueType} issue in ${selectedArea}`,
+        subject: `${issueTitle} issue in ${selectedArea}`,
         description: description,
         department: issueType,
         area: selectedArea,
@@ -161,12 +186,37 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ issueType, issueTitle
                   type="button" 
                   variant="outline" 
                   className="flex items-center gap-2"
-                  onClick={() => toast.info("Map integration coming soon!")}
+                  onClick={toggleMap}
                 >
                   <MapPin size={16} />
                   <span>Map</span>
                 </Button>
               </div>
+              
+              {showMap && (
+                <div className="mt-2 border rounded-md p-4">
+                  <p className="text-sm text-center mb-2">Google Maps integration will be shown here</p>
+                  <div className="h-40 bg-gray-100 rounded-md flex items-center justify-center mb-2">
+                    <MapPin className="text-gray-400" size={32} />
+                  </div>
+                  <div className="flex justify-between">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => handleLocationSelect("Selected Location")}
+                    >
+                      Select Location
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setShowMap(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -174,16 +224,26 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ issueType, issueTitle
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
                   <Input 
-                    id="image" 
+                    ref={fileInputRef}
+                    id="image-upload" 
                     type="file" 
                     accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <Input 
+                    ref={cameraInputRef}
+                    id="image-capture" 
+                    type="file" 
+                    accept="image/*"
+                    capture="environment"
                     onChange={handleImageChange}
                     className="hidden"
                   />
                   <Button 
                     type="button" 
                     variant="outline" 
-                    onClick={() => document.getElementById('image')?.click()} 
+                    onClick={handleFileUpload}
                     className="flex items-center gap-2"
                   >
                     <Upload size={16} />
@@ -192,10 +252,7 @@ const IssueReportForm: React.FC<IssueReportFormProps> = ({ issueType, issueTitle
                   <Button 
                     type="button" 
                     variant="outline" 
-                    onClick={() => {
-                      // This would normally open the camera
-                      document.getElementById('image')?.click();
-                    }} 
+                    onClick={handleCameraCapture}
                     className="flex items-center gap-2"
                   >
                     <Camera size={16} />

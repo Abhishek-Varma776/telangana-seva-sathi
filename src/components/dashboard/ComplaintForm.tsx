@@ -19,7 +19,8 @@ interface ComplaintFormProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSelectChange: (name: string, value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
-  onCancel?: () => void; // Added optional onCancel prop
+  onCancel?: () => void;
+  hideFields?: string[]; // Add this to hide specific fields
 }
 
 const ComplaintForm = ({ 
@@ -27,7 +28,8 @@ const ComplaintForm = ({
   onInputChange, 
   onSelectChange, 
   onSubmit,
-  onCancel 
+  onCancel,
+  hideFields = []
 }: ComplaintFormProps) => {
   return (
     <Card>
@@ -62,31 +64,33 @@ const ComplaintForm = ({
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="department">Department</Label>
-              <Select
-                onValueChange={(value) => onSelectChange("department", value)}
-                value={newComplaint.department}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select department" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="drainage">Drainage</SelectItem>
-                  <SelectItem value="potholes">Potholes</SelectItem>
-                  <SelectItem value="streetlight">Streetlight</SelectItem>
-                  <SelectItem value="garbage">Garbage Collection</SelectItem>
-                  <SelectItem value="safety">Public Safety</SelectItem>
-                  <SelectItem value="municipal">Municipal Administration</SelectItem>
-                  <SelectItem value="water">Water Board</SelectItem>
-                  <SelectItem value="electricity">Electricity Department</SelectItem>
-                  <SelectItem value="transport">Transport Department</SelectItem>
-                  <SelectItem value="health">Health Department</SelectItem>
-                  <SelectItem value="education">Education Department</SelectItem>
-                  <SelectItem value="panchayat">Panchayat Raj</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {!hideFields.includes("department") && (
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Select
+                  onValueChange={(value) => onSelectChange("department", value)}
+                  value={newComplaint.department}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="drainage">Drainage</SelectItem>
+                    <SelectItem value="potholes">Potholes</SelectItem>
+                    <SelectItem value="streetlight">Streetlight</SelectItem>
+                    <SelectItem value="garbage">Garbage Collection</SelectItem>
+                    <SelectItem value="safety">Public Safety</SelectItem>
+                    <SelectItem value="municipal">Municipal Administration</SelectItem>
+                    <SelectItem value="water">Water Board</SelectItem>
+                    <SelectItem value="electricity">Electricity Department</SelectItem>
+                    <SelectItem value="transport">Transport Department</SelectItem>
+                    <SelectItem value="health">Health Department</SelectItem>
+                    <SelectItem value="education">Education Department</SelectItem>
+                    <SelectItem value="panchayat">Panchayat Raj</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="area">Area/Colony</Label>

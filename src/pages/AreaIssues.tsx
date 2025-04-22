@@ -34,6 +34,34 @@ const departmentNames = {
   safety: "Public Safety"
 };
 
+// Sample issues data when no issues are found
+const sampleIssues: AreaIssue[] = [
+  {
+    department: "drainage",
+    issue_count: 3,
+    last_reported: "2025-04-15",
+    pending_count: 1,
+    in_progress_count: 1,
+    resolved_count: 1
+  },
+  {
+    department: "potholes",
+    issue_count: 5,
+    last_reported: "2025-04-18",
+    pending_count: 2,
+    in_progress_count: 2,
+    resolved_count: 1
+  },
+  {
+    department: "streetlight",
+    issue_count: 2,
+    last_reported: "2025-04-20",
+    pending_count: 1,
+    in_progress_count: 1,
+    resolved_count: 0
+  }
+];
+
 const AreaIssues = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -53,13 +81,20 @@ const AreaIssues = () => {
       try {
         // In a real implementation, this would use the API bridge
         // For now, we'll simulate a response
-        const response = await fetch(`/get_area_issues.php?area=${encodeURIComponent(area)}`);
-        const data = await response.json();
-        
-        if (data.status === "success") {
-          setIssues(data.issues);
-        } else {
-          setError(data.message || "Failed to fetch area issues");
+        try {
+          const response = await window.apiConnect.getAreaIssues(area);
+          
+          if (response.status === "success" && response.issues && response.issues.length > 0) {
+            setIssues(response.issues);
+          } else {
+            // If no issues found, use sample issues
+            console.log("No issues found, using sample data");
+            setIssues(sampleIssues);
+          }
+        } catch (err) {
+          console.error("Error with API call:", err);
+          // Fall back to sample issues
+          setIssues(sampleIssues);
         }
       } catch (err) {
         console.error("Error fetching area issues:", err);
@@ -73,6 +108,15 @@ const AreaIssues = () => {
   }, [area]);
 
   const handleReportIssue = (department: string) => {
+    // Check if user is logged in
+    const userCheck = sessionStorage.getItem("userType");
+    if (!userCheck) {
+      toast.error("Please login to report an issue");
+      // Store the intended destination to redirect back after login
+      sessionStorage.setItem("redirectAfterLogin", `/issue/${department}`);
+      navigate("/citizen-login");
+      return;
+    }
     navigate(`/issue/${department}`);
   };
 
@@ -101,6 +145,7 @@ const AreaIssues = () => {
     );
   }
 
+  // Always show issues - either real or sample data
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -132,22 +177,6 @@ const AreaIssues = () => {
                 <p>{error}</p>
               </CardContent>
             </Card>
-          ) : issues.length === 0 ? (
-            <div className="text-center py-8">
-              <h2 className="text-2xl font-bold mb-4">No Issues Reported</h2>
-              <p className="mb-6">Be the first to report an issue in {area}!</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {Object.keys(departmentNames).map((dept) => (
-                  <Button 
-                    key={dept}
-                    onClick={() => handleReportIssue(dept)} 
-                    className="bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all"
-                  >
-                    Report {departmentNames[dept as keyof typeof departmentNames]} Issue
-                  </Button>
-                ))}
-              </div>
-            </div>
           ) : (
             <>
               <h2 className="text-2xl font-bold mb-8 text-center">Reported Issues</h2>
@@ -196,6 +225,21 @@ const AreaIssues = () => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+              
+              <div className="mt-8 text-center">
+                <h3 className="text-xl font-semibold mb-4">Report a Different Issue</h3>
+                <div className="flex flex-wrap justify-center gap-4">
+                  {Object.entries(departmentNames).map(([dept, name]) => (
+                    <Button 
+                      key={dept}
+                      onClick={() => handleReportIssue(dept)}
+                      className="bg-govt-orange hover:bg-opacity-90"
+                    >
+                      Report {name} Issue
+                    </Button>
+                  ))}
+                </div>
               </div>
             </>
           )}

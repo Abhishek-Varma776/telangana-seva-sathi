@@ -2,6 +2,8 @@
 <?php
 // Include database connection
 require_once 'db_connect.php';
+// Include sample data for area issues
+require_once 'area_issues_data.php';
 
 // Set header to accept JSON requests
 header('Content-Type: application/json');
@@ -20,7 +22,7 @@ if (!isset($_GET['area'])) {
 
 $area = sanitizeInput($_GET['area']);
 
-// Get issues for the specified area
+// First try to get data from database
 $sql = "SELECT c.department, COUNT(*) as issue_count, 
         MAX(c.created_at) as last_reported, 
         SUM(CASE WHEN c.status = 'Pending' THEN 1 ELSE 0 END) as pending_count,
@@ -45,6 +47,11 @@ while ($row = $result->fetch_assoc()) {
         'in_progress_count' => (int)$row['in_progress_count'],
         'resolved_count' => (int)$row['resolved_count']
     ];
+}
+
+// If no results from database, use sample data
+if (empty($issues)) {
+    $issues = getAreaIssues($area);
 }
 
 echo json_encode([

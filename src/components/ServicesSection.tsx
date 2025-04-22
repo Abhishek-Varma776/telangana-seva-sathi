@@ -1,5 +1,6 @@
-
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Droplet, CircleDashed, Lightbulb, Trash2, ShieldCheck } from "lucide-react";
@@ -42,6 +43,30 @@ const services = [
 ];
 
 const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
+  const navigate = useNavigate();
+  
+  const handleIssueSelect = (issueType: string) => {
+    // If custom handler provided (e.g., in a different context), use it
+    if (onIssueSelect) {
+      onIssueSelect(issueType);
+      return;
+    }
+    
+    // Otherwise handle navigation directly
+    // Check if user is logged in
+    const userCheck = sessionStorage.getItem("userType");
+    if (!userCheck) {
+      toast.error("Please login to report an issue");
+      // Store the intended destination to redirect back after login
+      sessionStorage.setItem("redirectAfterLogin", `/issue/${issueType}`);
+      navigate("/citizen-login");
+      return;
+    }
+    
+    // If logged in, navigate directly to issue page
+    navigate(`/issue/${issueType}`);
+  };
+
   return (
     <section className="py-16 bg-govt-lightgray">
       <div className="container mx-auto px-4">
@@ -60,7 +85,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
                 <CardDescription className="text-gray-600 mb-4">{service.description}</CardDescription>
                 <Button 
                   className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all"
-                  onClick={() => onIssueSelect?.(service.type)}
+                  onClick={() => handleIssueSelect(service.type)}
                 >
                   Report Issue
                 </Button>
