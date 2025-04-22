@@ -2,43 +2,46 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { Droplet, CircleDashed, Lightbulb, Trash2, ShieldCheck } from "lucide-react";
+
+interface ServicesSectionProps {
+  onIssueSelect?: (issueType: string) => void;
+}
 
 const services = [
   {
     title: "Drainage Issues",
     description: "Report blockage, overflow or damage in drainage systems across your area.",
     icon: <Droplet className="w-10 h-10 text-govt-blue" />,
-    path: "/issue/drainage"
+    type: "drainage"
   },
   {
     title: "Potholes",
     description: "Report potholes, road damages, or other road infrastructure issues.",
     icon: <CircleDashed className="w-10 h-10 text-govt-blue" />,
-    path: "/issue/potholes"
+    type: "potholes"
   },
   {
     title: "Streetlight",
     description: "Report non-functioning streetlights, damaged poles, or areas needing new lighting.",
     icon: <Lightbulb className="w-10 h-10 text-govt-blue" />,
-    path: "/issue/streetlight"
+    type: "streetlight"
   },
   {
     title: "Garbage Collection",
     description: "Report uncollected garbage, waste management issues or need for waste bins.",
     icon: <Trash2 className="w-10 h-10 text-govt-blue" />,
-    path: "/issue/garbage"
+    type: "garbage"
   },
   {
     title: "Public Safety",
     description: "Report safety concerns in public areas, damaged public property or security issues.",
     icon: <ShieldCheck className="w-10 h-10 text-govt-blue" />,
-    path: "/issue/safety"
+    type: "safety"
   }
 ];
 
-const ServicesSection = () => {
+const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
   return (
     <section className="py-16 bg-govt-lightgray">
       <div className="container mx-auto px-4">
@@ -55,11 +58,12 @@ const ServicesSection = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 mb-4">{service.description}</CardDescription>
-                <Link to={service.path}>
-                  <Button className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all">
-                    Report Issue
-                  </Button>
-                </Link>
+                <Button 
+                  className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all"
+                  onClick={() => onIssueSelect?.(service.type)}
+                >
+                  Report Issue
+                </Button>
               </CardContent>
             </Card>
           ))}

@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ComplaintForm from "@/components/dashboard/ComplaintForm";
+import { useNavigate } from "react-router-dom";
 import ComplaintsList from "@/components/dashboard/ComplaintsList";
 import ComplaintDetails from "@/components/dashboard/ComplaintDetails";
 import FeedbackForm from "@/components/dashboard/FeedbackForm";
+import ComplaintForm from "@/components/dashboard/ComplaintForm";
 import ServicesSection from "@/components/ServicesSection";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -50,6 +51,16 @@ const mockComplaints = [
 ];
 
 const CitizenDashboard = () => {
+  const navigate = useNavigate();
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [showComplaintForm, setShowComplaintForm] = useState(false);
+  const [issueType, setIssueType] = useState("");
+
+  const handleIssueSelect = (type: string) => {
+    setIssueType(type);
+    setShowComplaintForm(true);
+  };
+
   const [newComplaint, setNewComplaint] = useState({
     subject: "",
     description: "",
@@ -58,7 +69,6 @@ const CitizenDashboard = () => {
     address: "",
     pincode: "",
   });
-  const [selectedComplaint, setSelectedComplaint] = useState(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewComplaint({
@@ -102,28 +112,28 @@ const CitizenDashboard = () => {
       <main className="flex-grow py-8 bg-govt-lightgray">
         <div className="container mx-auto px-4">
           <Tabs defaultValue="services" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="services">Report Issues</TabsTrigger>
-              <TabsTrigger value="file-complaint">File a Complaint</TabsTrigger>
               <TabsTrigger value="my-complaints">My Complaints</TabsTrigger>
               <TabsTrigger value="feedback">Feedback</TabsTrigger>
             </TabsList>
             
             <TabsContent value="services">
-              <Card>
-                <CardContent className="pt-6">
-                  <ServicesSection />
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="file-complaint">
-              <ComplaintForm
-                newComplaint={newComplaint}
-                onInputChange={handleInputChange}
-                onSelectChange={handleSelectChange}
-                onSubmit={handleSubmitComplaint}
-              />
+              {!showComplaintForm ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <ServicesSection onIssueSelect={handleIssueSelect} />
+                  </CardContent>
+                </Card>
+              ) : (
+                <ComplaintForm
+                  newComplaint={{ ...newComplaint, department: issueType }}
+                  onInputChange={handleInputChange}
+                  onSelectChange={handleSelectChange}
+                  onSubmit={handleSubmitComplaint}
+                  onCancel={() => setShowComplaintForm(false)}
+                />
+              )}
             </TabsContent>
             
             <TabsContent value="my-complaints" className="space-y-6">
