@@ -52,7 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Complaint methods
     async submitComplaint(complaintData) {
-      return await this.fetchApi('submit_complaint.php', 'POST', complaintData);
+      // Check if there's an image file to upload
+      if (complaintData.image instanceof File) {
+        const formData = new FormData();
+        
+        // Add text fields to FormData
+        for (const key in complaintData) {
+          if (key !== 'image') {
+            formData.append(key, complaintData[key]);
+          }
+        }
+        
+        // Add image file to FormData
+        formData.append('image', complaintData.image);
+        
+        // Use special method for FormData uploads
+        return await this.uploadWithFormData('submit_complaint.php', formData);
+      } else {
+        // Regular JSON submission if no image
+        return await this.fetchApi('submit_complaint.php', 'POST', complaintData);
+      }
     },
 
     async getCitizenComplaints() {

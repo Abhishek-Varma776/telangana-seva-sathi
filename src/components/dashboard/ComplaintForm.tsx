@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MapPin, Upload, Camera } from "lucide-react";
 
 interface ComplaintFormProps {
   newComplaint: {
@@ -31,6 +32,49 @@ const ComplaintForm = ({
   onCancel,
   hideFields = []
 }: ComplaintFormProps) => {
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImage(file);
+      
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCameraCapture = () => {
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
+    }
+  };
+
+  const handleFileUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const toggleMap = () => {
+    setShowMap(!showMap);
+  };
+
+  const handleLocationSelect = (location: string) => {
+    onInputChange({
+      target: { name: 'address', value: location }
+    } as React.ChangeEvent<HTMLTextAreaElement>);
+    setShowMap(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -80,13 +124,6 @@ const ComplaintForm = ({
                     <SelectItem value="streetlight">Streetlight</SelectItem>
                     <SelectItem value="garbage">Garbage Collection</SelectItem>
                     <SelectItem value="safety">Public Safety</SelectItem>
-                    <SelectItem value="municipal">Municipal Administration</SelectItem>
-                    <SelectItem value="water">Water Board</SelectItem>
-                    <SelectItem value="electricity">Electricity Department</SelectItem>
-                    <SelectItem value="transport">Transport Department</SelectItem>
-                    <SelectItem value="health">Health Department</SelectItem>
-                    <SelectItem value="education">Education Department</SelectItem>
-                    <SelectItem value="panchayat">Panchayat Raj</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -106,15 +143,52 @@ const ComplaintForm = ({
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="address">Complete Address</Label>
-            <Textarea
-              id="address"
-              name="address"
-              placeholder="Full address where the issue is located"
-              value={newComplaint.address}
-              onChange={onInputChange}
-              required
-            />
+            <Label htmlFor="address">Location</Label>
+            <div className="flex gap-3">
+              <Textarea
+                id="address"
+                name="address"
+                placeholder="Full address where the issue is located"
+                value={newComplaint.address}
+                onChange={onInputChange}
+                className="flex-grow"
+                required
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex items-center gap-2"
+                onClick={toggleMap}
+              >
+                <MapPin size={16} />
+                <span>Map</span>
+              </Button>
+            </div>
+            
+            {showMap && (
+              <div className="mt-2 border rounded-md p-4">
+                <p className="text-sm text-center mb-2">Google Maps will be displayed here</p>
+                <div className="h-40 bg-gray-100 rounded-md flex items-center justify-center mb-2">
+                  <MapPin className="text-gray-400" size={32} />
+                </div>
+                <div className="flex justify-between">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => handleLocationSelect("Selected Location")}
+                  >
+                    Select Location
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setShowMap(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -127,6 +201,59 @@ const ComplaintForm = ({
               onChange={onInputChange}
               required
             />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="image">Upload Image</Label>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Input 
+                  ref={fileInputRef}
+                  id="image-upload" 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <Input 
+                  ref={cameraInputRef}
+                  id="image-capture" 
+                  type="file" 
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleFileUpload}
+                  className="flex items-center gap-2"
+                >
+                  <Upload size={16} />
+                  <span>Choose File</span>
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleCameraCapture}
+                  className="flex items-center gap-2"
+                >
+                  <Camera size={16} />
+                  <span>Take Photo</span>
+                </Button>
+              </div>
+              {imagePreview && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500 mb-2">Image Preview:</p>
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="max-h-60 rounded-md border"
+                  />
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="pt-4 flex flex-wrap gap-4">

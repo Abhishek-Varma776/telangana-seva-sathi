@@ -40,6 +40,7 @@ $department = sanitizeInput($data['department']);
 $area = sanitizeInput($data['area']);
 $address = sanitizeInput($data['address']);
 $pincode = isset($data['pincode']) ? sanitizeInput($data['pincode']) : '';
+$landmark = isset($data['landmark']) ? sanitizeInput($data['landmark']) : '';
 
 // Generate unique complaint ID (Area-Department-Year-Month-Random5digits)
 $complaint_id = strtoupper(substr($area, 0, 3)) . '-' . strtoupper(substr($department, 0, 3)) . '-' . date('Ym') . '-' . rand(10000, 99999);
@@ -54,13 +55,13 @@ $officerStmt->bind_result($officer_id);
 $officerStmt->fetch();
 $officerStmt->close();
 
-// Prepare SQL statement
-$sql = "INSERT INTO complaints (complaint_id, citizen_id, subject, description, department, area, address, pincode, officer_id, created_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+// Prepare SQL statement with landmark field
+$sql = "INSERT INTO complaints (complaint_id, citizen_id, subject, description, department, area, address, pincode, landmark, officer_id, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
 // Prepare statement
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sissssssi", $complaint_id, $citizen_id, $subject, $description, $department, $area, $address, $pincode, $officer_id);
+$stmt->bind_param("sisssssssi", $complaint_id, $citizen_id, $subject, $description, $department, $area, $address, $pincode, $landmark, $officer_id);
 
 // Execute statement
 if ($stmt->execute()) {
@@ -89,6 +90,19 @@ if ($stmt->execute()) {
             $hasImage = true;
         }
     }
+    
+    // Update the nearby_issues table to track issues by area and department
+    $updateAreaIssueSql = "INSERT INTO nearby_issues (area, department, issue_count, last_reported_at)
+                          VALUES (?, ?, 1, NOW())
+                          ON DUPLICATE KEY UPDATE 
+                          issue_count = issue_count + 1, 
+                          last_reported_at = NOW(),
+                          status = 'Active'";
+    
+    $updateAreaIssueStmt = $conn->prepare($updateAreaIssueSql);
+    $updateAreaIssueStmt->bind_param("ss", $area, $department);
+    $updateAreaIssueStmt->execute();
+    $updateAreaIssueStmt->close();
     
     echo json_encode([
         'status' => 'success', 

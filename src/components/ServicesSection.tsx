@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -9,7 +10,8 @@ interface ServicesSectionProps {
   onIssueSelect?: (issueType: string) => void;
 }
 
-const services = [
+// Define department services with consistent naming
+export const departmentServices = [
   {
     title: "Drainage Issues",
     description: "Report blockage, overflow or damage in drainage systems across your area.",
@@ -41,6 +43,15 @@ const services = [
     type: "safety"
   }
 ];
+
+// Create a mapping object for department types to display names
+export const departmentNames = {
+  drainage: "Drainage",
+  potholes: "Road & Potholes",
+  streetlight: "Streetlight",
+  garbage: "Garbage Collection",
+  safety: "Public Safety"
+};
 
 const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
   const navigate = useNavigate();
@@ -75,7 +86,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => (
+          {departmentServices.map((service, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
                 <div className="mb-4 flex justify-center">{service.icon}</div>

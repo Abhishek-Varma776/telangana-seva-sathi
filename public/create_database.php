@@ -73,6 +73,8 @@ $sql = "CREATE TABLE IF NOT EXISTS complaints (
     pincode VARCHAR(10) NOT NULL,
     image_path VARCHAR(255) NULL,
     landmark VARCHAR(255) NULL,
+    latitude DECIMAL(10,8) NULL,
+    longitude DECIMAL(11,8) NULL,
     status ENUM('Pending', 'In Progress', 'Resolved', 'Closed') NOT NULL DEFAULT 'Pending',
     officer_id INT(11) NULL,
     officer_remarks TEXT NULL,
@@ -91,11 +93,14 @@ if ($conn->query($sql) !== TRUE) {
 $sql = "CREATE TABLE IF NOT EXISTS area_issues (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     area VARCHAR(100) NOT NULL,
+    department VARCHAR(100) NOT NULL,
     issue_count INT(11) DEFAULT 0,
     pending_count INT(11) DEFAULT 0,
+    in_progress_count INT(11) DEFAULT 0,
     resolved_count INT(11) DEFAULT 0,
+    last_reported VARCHAR(50) NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY (area)
+    UNIQUE KEY (area, department)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
 if ($conn->query($sql) !== TRUE) {
@@ -133,9 +138,43 @@ if ($conn->query($sql) !== TRUE) {
     die("Error creating nearby_issues table: " . $conn->error);
 }
 
-// Insert sample officers for each department in each area
+// Insert sample area issues data
 $areas = ['Champapet', 'LB Nagar', 'Hayathnagar', 'Nagole', 'Uppal', 'Jubilee Hills', 'Hitech City', 'Raidurg'];
 $departments = ['drainage', 'potholes', 'streetlight', 'garbage', 'safety'];
+
+foreach ($areas as $area) {
+    foreach ($departments as $department) {
+        // Generate random counts
+        $issue_count = rand(1, 10);
+        $pending_count = rand(0, $issue_count/2);
+        $in_progress_count = rand(0, $issue_count/2);
+        $resolved_count = $issue_count - $pending_count - $in_progress_count;
+        
+        // Generate a date within the last month
+        $date = date('Y-m-d', strtotime('-' . rand(0, 30) . ' days'));
+        
+        // Check if record exists
+        $checkSql = "SELECT id FROM area_issues WHERE area = ? AND department = ?";
+        $checkStmt = $conn->prepare($checkSql);
+        $checkStmt->bind_param("ss", $area, $department);
+        $checkStmt->execute();
+        $checkStmt->store_result();
+        
+        if ($checkStmt->num_rows == 0) {
+            // Insert new record
+            $insertSql = "INSERT INTO area_issues (area, department, issue_count, pending_count, in_progress_count, resolved_count, last_reported) 
+                          VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $insertStmt = $conn->prepare($insertSql);
+            $insertStmt->bind_param("ssiiiis", $area, $department, $issue_count, $pending_count, $in_progress_count, $resolved_count, $date);
+            $insertStmt->execute();
+            $insertStmt->close();
+        }
+        
+        $checkStmt->close();
+    }
+}
+
+// Insert sample officers for each department in each area
 $designations = [
     'drainage' => 'Drainage Inspector',
     'potholes' => 'Road Maintenance Officer',
@@ -179,7 +218,13 @@ foreach ($areas as $area) {
     }
 }
 
-echo "Database and tables created successfully. Sample officers added for each area and department.";
+// Create uploads directory if it doesn't exist
+$upload_dir = __DIR__ . '/uploads';
+if (!file_exists($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
+echo "Database and tables created successfully. Sample officers and area issues added.";
 
 $conn->close();
 ?>

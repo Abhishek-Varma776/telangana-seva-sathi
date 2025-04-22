@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Droplet, CircleDashed, Lightbulb, Trash2, ShieldCheck, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { departmentNames } from "@/components/ServicesSection";
 
 interface AreaIssue {
   department: string;
@@ -22,14 +24,6 @@ const departmentIcons = {
   streetlight: <Lightbulb className="h-8 w-8" />,
   garbage: <Trash2 className="h-8 w-8" />,
   safety: <ShieldCheck className="h-8 w-8" />
-};
-
-const departmentNames = {
-  drainage: "Drainage",
-  potholes: "Road & Potholes",
-  streetlight: "Streetlight",
-  garbage: "Garbage Collection",
-  safety: "Public Safety"
 };
 
 const sampleIssues: AreaIssue[] = [
