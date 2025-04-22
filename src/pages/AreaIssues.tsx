@@ -16,7 +16,6 @@ interface AreaIssue {
   resolved_count: number;
 }
 
-// Department icons mapping
 const departmentIcons = {
   drainage: <Droplet className="h-8 w-8" />,
   potholes: <CircleDashed className="h-8 w-8" />,
@@ -25,7 +24,6 @@ const departmentIcons = {
   safety: <ShieldCheck className="h-8 w-8" />
 };
 
-// Department display names
 const departmentNames = {
   drainage: "Drainage",
   potholes: "Road & Potholes",
@@ -34,7 +32,6 @@ const departmentNames = {
   safety: "Public Safety"
 };
 
-// Sample issues data when no issues are found
 const sampleIssues: AreaIssue[] = [
   {
     department: "drainage",
@@ -80,21 +77,17 @@ const AreaIssues = () => {
 
     const fetchAreaIssues = async () => {
       try {
-        // In a real implementation, this would use the API bridge
-        // For now, we'll simulate a response
         try {
           const response = await window.apiConnect.getAreaIssues(area);
           
           if (response.status === "success" && response.issues && response.issues.length > 0) {
             setIssues(response.issues);
           } else {
-            // If no issues found, use sample issues
             console.log("No issues found, using sample data");
             setIssues(sampleIssues);
           }
         } catch (err) {
           console.error("Error with API call:", err);
-          // Fall back to sample issues
           setIssues(sampleIssues);
         }
       } catch (err) {
@@ -109,7 +102,6 @@ const AreaIssues = () => {
   }, [area]);
 
   const handleReportIssue = (department: string) => {
-    // Check if user is logged in
     const userCheck = sessionStorage.getItem("userType");
     if (!userCheck) {
       toast({
@@ -117,7 +109,6 @@ const AreaIssues = () => {
         description: "Please login to report an issue",
         variant: "destructive"
       });
-      // Store the intended destination to redirect back after login
       sessionStorage.setItem("redirectAfterLogin", `/issue/${department}`);
       navigate("/citizen-login");
       return;
@@ -150,7 +141,6 @@ const AreaIssues = () => {
     );
   }
 
-  // Always show issues - either real or sample data
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
