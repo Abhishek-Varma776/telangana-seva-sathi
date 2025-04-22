@@ -19,13 +19,15 @@ interface ComplaintFormProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSelectChange: (name: string, value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  onCancel?: () => void; // Added optional onCancel prop
 }
 
 const ComplaintForm = ({ 
   newComplaint, 
   onInputChange, 
   onSelectChange, 
-  onSubmit 
+  onSubmit,
+  onCancel 
 }: ComplaintFormProps) => {
   return (
     <Card>
@@ -64,11 +66,17 @@ const ComplaintForm = ({
               <Label htmlFor="department">Department</Label>
               <Select
                 onValueChange={(value) => onSelectChange("department", value)}
+                value={newComplaint.department}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="drainage">Drainage</SelectItem>
+                  <SelectItem value="potholes">Potholes</SelectItem>
+                  <SelectItem value="streetlight">Streetlight</SelectItem>
+                  <SelectItem value="garbage">Garbage Collection</SelectItem>
+                  <SelectItem value="safety">Public Safety</SelectItem>
                   <SelectItem value="municipal">Municipal Administration</SelectItem>
                   <SelectItem value="water">Water Board</SelectItem>
                   <SelectItem value="electricity">Electricity Department</SelectItem>
@@ -117,10 +125,15 @@ const ComplaintForm = ({
             />
           </div>
           
-          <div className="pt-4">
+          <div className="pt-4 flex flex-wrap gap-4">
             <Button type="submit" className="bg-govt-orange hover:bg-opacity-90">
               Submit Complaint
             </Button>
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancel
+              </Button>
+            )}
           </div>
         </form>
       </CardContent>
