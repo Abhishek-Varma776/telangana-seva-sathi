@@ -29,7 +29,7 @@ export const departmentServices = [
   {
     title: "Potholes/Road Damage",
     description: "Potholes or road infrastructure issues.",
-    icon: <Road className="w-10 h-10 text-govt-blue" />,
+    icon: <Construction className="w-10 h-10 text-govt-blue" />,
     type: "potholes",
   },
   {
