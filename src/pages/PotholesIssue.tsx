@@ -3,7 +3,7 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import IssueReportForm from "@/components/IssueReportForm";
-import { CircleDashed } from "lucide-react";
+import { Road } from "lucide-react";
 
 const PotholesIssue = () => {
   return (
@@ -13,7 +13,7 @@ const PotholesIssue = () => {
       <div className="bg-govt-blue text-white py-12">
         <div className="container mx-auto px-4 text-center">
           <div className="flex justify-center mb-4">
-            <CircleDashed className="h-16 w-16" />
+            <Road className="h-16 w-16" />
           </div>
           <h1 className="text-3xl font-bold mb-4">Road & Pothole Issues</h1>
           <p className="max-w-2xl mx-auto">

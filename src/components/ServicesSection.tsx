@@ -1,17 +1,16 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  TrafficCone,
-  Pothole,
-  Streetlight,
-  Trash,
-  PoliceCar,
-  Drop,
-  HouseDamage,
+  Construction,
+  Road,
+  Lightbulb,
+  Trash2,
+  Shield,
+  Building,
+  AlertTriangle,
   HelpCircle,
 } from "lucide-react";
 
@@ -24,43 +23,43 @@ export const departmentServices = [
   {
     title: "Drainage Issues",
     description: "Blockage, overflow, or damage in drainage systems.",
-    icon: <Drop className="w-10 h-10 text-govt-blue" />,
+    icon: <Construction className="w-10 h-10 text-govt-blue" />,
     type: "drainage",
   },
   {
     title: "Potholes/Road Damage",
     description: "Potholes or road infrastructure issues.",
-    icon: <Pothole className="w-10 h-10 text-govt-blue" />,
+    icon: <Road className="w-10 h-10 text-govt-blue" />,
     type: "potholes",
   },
   {
     title: "Streetlight Problems",
     description: "Non-functioning or damaged streetlights and poles.",
-    icon: <Streetlight className="w-10 h-10 text-govt-blue" />,
+    icon: <Lightbulb className="w-10 h-10 text-govt-blue" />,
     type: "streetlight",
   },
   {
     title: "Garbage Collection",
     description: "Uncollected garbage or need for more waste bins.",
-    icon: <Trash className="w-10 h-10 text-govt-blue" />,
+    icon: <Trash2 className="w-10 h-10 text-govt-blue" />,
     type: "garbage",
   },
   {
     title: "Public Safety",
     description: "Safety concerns in public areas, or security issues.",
-    icon: <PoliceCar className="w-10 h-10 text-govt-blue" />,
+    icon: <Shield className="w-10 h-10 text-govt-blue" />,
     type: "safety",
   },
   {
     title: "Property/Building Damage",
     description: "Damaged or unsafe public buildings/property.",
-    icon: <HouseDamage className="w-10 h-10 text-govt-blue" />,
+    icon: <Building className="w-10 h-10 text-govt-blue" />,
     type: "property-damage",
   },
   {
     title: "Traffic Signals",
     description: "Malfunctioning or missing traffic signals/cones.",
-    icon: <TrafficCone className="w-10 h-10 text-govt-blue" />,
+    icon: <AlertTriangle className="w-10 h-10 text-govt-blue" />,
     type: "traffic-signals",
   },
   {
