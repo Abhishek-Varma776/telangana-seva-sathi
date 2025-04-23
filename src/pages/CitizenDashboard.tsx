@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -32,7 +31,6 @@ const CitizenDashboard = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
-    // Fetch user complaints when component mounts
     fetchUserComplaints();
   }, []);
 
@@ -43,7 +41,6 @@ const CitizenDashboard = () => {
       if (response.status === "success" && response.complaints) {
         setComplaints(response.complaints);
       } else {
-        // Use mock data if API fails
         setComplaints([
           {
             id: "C2023-001",
@@ -134,7 +131,7 @@ const CitizenDashboard = () => {
       
       if (response.status === "success") {
         toast.success("Complaint submitted successfully!");
-        fetchUserComplaints(); // Refresh the complaints list
+        fetchUserComplaints();
         setNewComplaint({
           subject: "",
           description: "",
@@ -158,14 +155,14 @@ const CitizenDashboard = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       <div className="bg-govt-blue text-white py-6">
         <div className="container mx-auto px-4">
           <h1 className="text-2xl font-bold">Citizen Dashboard</h1>
           <p>Welcome back, Citizen</p>
         </div>
       </div>
-      
+
       <main className="flex-grow py-8 bg-govt-lightgray">
         <div className="container mx-auto px-4">
           <Tabs defaultValue="services" className="space-y-8">
@@ -174,7 +171,7 @@ const CitizenDashboard = () => {
               <TabsTrigger value="my-complaints">My Complaints</TabsTrigger>
               <TabsTrigger value="feedback">Feedback</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="services">
               {!showComplaintForm ? (
                 <Card>
@@ -193,7 +190,7 @@ const CitizenDashboard = () => {
                 />
               )}
             </TabsContent>
-            
+
             <TabsContent value="my-complaints" className="space-y-6">
               {loading ? (
                 <div className="text-center py-8">
@@ -211,14 +208,14 @@ const CitizenDashboard = () => {
                 />
               )}
             </TabsContent>
-            
+
             <TabsContent value="feedback">
               <FeedbackForm complaints={complaints} />
             </TabsContent>
           </Tabs>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

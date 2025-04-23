@@ -4,60 +4,89 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Droplet, CircleDashed, Lightbulb, Trash2, ShieldCheck } from "lucide-react";
+import {
+  TrafficCone,
+  Pothole,
+  Streetlight,
+  Trash,
+  PoliceCar,
+  Drop,
+  HouseDamage,
+  HelpCircle,
+} from "lucide-react";
 
 interface ServicesSectionProps {
   onIssueSelect?: (issueType: string) => void;
 }
 
-// Define department services with consistent naming
+// Expanded department services with all required government issues and lucide-react icons
 export const departmentServices = [
   {
     title: "Drainage Issues",
-    description: "Report blockage, overflow or damage in drainage systems across your area.",
-    icon: <Droplet className="w-10 h-10 text-govt-blue" />,
-    type: "drainage"
+    description: "Blockage, overflow, or damage in drainage systems.",
+    icon: <Drop className="w-10 h-10 text-govt-blue" />,
+    type: "drainage",
   },
   {
-    title: "Potholes",
-    description: "Report potholes, road damages, or other road infrastructure issues.",
-    icon: <CircleDashed className="w-10 h-10 text-govt-blue" />,
-    type: "potholes"
+    title: "Potholes/Road Damage",
+    description: "Potholes or road infrastructure issues.",
+    icon: <Pothole className="w-10 h-10 text-govt-blue" />,
+    type: "potholes",
   },
   {
-    title: "Streetlight",
-    description: "Report non-functioning streetlights, damaged poles, or areas needing new lighting.",
-    icon: <Lightbulb className="w-10 h-10 text-govt-blue" />,
-    type: "streetlight"
+    title: "Streetlight Problems",
+    description: "Non-functioning or damaged streetlights and poles.",
+    icon: <Streetlight className="w-10 h-10 text-govt-blue" />,
+    type: "streetlight",
   },
   {
     title: "Garbage Collection",
-    description: "Report uncollected garbage, waste management issues or need for waste bins.",
-    icon: <Trash2 className="w-10 h-10 text-govt-blue" />,
-    type: "garbage"
+    description: "Uncollected garbage or need for more waste bins.",
+    icon: <Trash className="w-10 h-10 text-govt-blue" />,
+    type: "garbage",
   },
   {
     title: "Public Safety",
-    description: "Report safety concerns in public areas, damaged public property or security issues.",
-    icon: <ShieldCheck className="w-10 h-10 text-govt-blue" />,
-    type: "safety"
-  }
+    description: "Safety concerns in public areas, or security issues.",
+    icon: <PoliceCar className="w-10 h-10 text-govt-blue" />,
+    type: "safety",
+  },
+  {
+    title: "Property/Building Damage",
+    description: "Damaged or unsafe public buildings/property.",
+    icon: <HouseDamage className="w-10 h-10 text-govt-blue" />,
+    type: "property-damage",
+  },
+  {
+    title: "Traffic Signals",
+    description: "Malfunctioning or missing traffic signals/cones.",
+    icon: <TrafficCone className="w-10 h-10 text-govt-blue" />,
+    type: "traffic-signals",
+  },
+  {
+    title: "General Help",
+    description: "Other civic, legal, or administrative support.",
+    icon: <HelpCircle className="w-10 h-10 text-govt-blue" />,
+    type: "general-help",
+  },
 ];
 
-// Create a mapping object for department types to display names
 export const departmentNames = {
   drainage: "Drainage",
   potholes: "Road & Potholes",
   streetlight: "Streetlight",
   garbage: "Garbage Collection",
-  safety: "Public Safety"
+  safety: "Public Safety",
+  "property-damage": "Property/Building",
+  "traffic-signals": "Traffic Signals",
+  "general-help": "Help/Other",
 };
 
 const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
   const navigate = useNavigate();
-  
+
   const handleIssueSelect = (issueType: string) => {
-    // If custom handler provided (e.g., in a different context), use it
+    // Custom handler if provided
     if (onIssueSelect) {
       onIssueSelect(issueType);
       return;
@@ -68,12 +97,10 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
     const userCheck = sessionStorage.getItem("userType");
     if (!userCheck) {
       toast.error("Please login to report an issue");
-      // Store the intended destination to redirect back after login
       sessionStorage.setItem("redirectAfterLogin", `/issue/${issueType}`);
       navigate("/citizen-login");
       return;
     }
-    
     // If logged in, navigate directly to issue page
     navigate(`/issue/${issueType}`);
   };
@@ -84,7 +111,6 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
         <h2 className="text-3xl font-bold text-center mb-12 text-govt-darkblue font-poppins">
           Report Issues
         </h2>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {departmentServices.map((service, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
@@ -94,7 +120,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 mb-4">{service.description}</CardDescription>
-                <Button 
+                <Button
                   className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all"
                   onClick={() => handleIssueSelect(service.type)}
                 >
