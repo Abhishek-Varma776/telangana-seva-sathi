@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,6 +12,10 @@ import {
   Building,
   AlertTriangle,
   HelpCircle,
+  Droplet,
+  CarFront,
+  House,
+  AmbulanceIcon
 } from "lucide-react";
 
 interface ServicesSectionProps {
@@ -21,7 +26,7 @@ export const departmentServices = [
   {
     title: "Drainage Issues",
     description: "Blockage, overflow, or damage in drainage systems.",
-    icon: <Construction className="w-10 h-10 text-govt-blue" />,
+    icon: <Droplet className="w-10 h-10 text-govt-blue" />,
     type: "drainage",
   },
   {
@@ -51,7 +56,7 @@ export const departmentServices = [
   {
     title: "Property/Building Damage",
     description: "Damaged or unsafe public buildings/property.",
-    icon: <Building className="w-10 h-10 text-govt-blue" />,
+    icon: <House className="w-10 h-10 text-govt-blue" />,
     type: "property-damage",
   },
   {
