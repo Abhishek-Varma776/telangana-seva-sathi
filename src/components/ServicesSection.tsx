@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import {
   Construction,
-  Road,
   Lightbulb,
   Trash2,
   Shield,
@@ -18,7 +17,6 @@ interface ServicesSectionProps {
   onIssueSelect?: (issueType: string) => void;
 }
 
-// Expanded department services with all required government issues and lucide-react icons
 export const departmentServices = [
   {
     title: "Drainage Issues",
@@ -85,14 +83,11 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
   const navigate = useNavigate();
 
   const handleIssueSelect = (issueType: string) => {
-    // Custom handler if provided
     if (onIssueSelect) {
       onIssueSelect(issueType);
       return;
     }
     
-    // Otherwise handle navigation directly
-    // Check if user is logged in
     const userCheck = sessionStorage.getItem("userType");
     if (!userCheck) {
       toast.error("Please login to report an issue");
@@ -100,7 +95,6 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
       navigate("/citizen-login");
       return;
     }
-    // If logged in, navigate directly to issue page
     navigate(`/issue/${issueType}`);
   };
 
