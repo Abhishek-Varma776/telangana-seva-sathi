@@ -53,8 +53,6 @@ const CitizenAuth = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow py-12 flex flex-col items-center justify-center bg-govt-lightgray">
-        <GovernmentIssuesBlock />
-
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
