@@ -23,9 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const response = await fetch(`${this.baseUrl}/${endpoint}`, options);
-        const result = await response.json();
-
-        return result;
+        
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const result = await response.json();
+          return result;
+        } else {
+          console.error('Non-JSON response received:', await response.text());
+          return { 
+            status: 'error', 
+            message: 'Server returned an invalid response format. Please check server configuration.' 
+          };
+        }
       } catch (error) {
         console.error('API Error:', error);
         return { status: 'error', message: 'Network error. Please try again.' };
@@ -109,7 +119,16 @@ document.addEventListener('DOMContentLoaded', () => {
           credentials: 'include'
         });
         
-        return await response.json();
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return await response.json();
+        } else {
+          console.error('Non-JSON response received:', await response.text());
+          return { 
+            status: 'error', 
+            message: 'Server returned an invalid response format. Please check server configuration.' 
+          };
+        }
       } catch (error) {
         console.error('Upload API Error:', error);
         return { status: 'error', message: 'Network error during file upload. Please try again.' };

@@ -11,7 +11,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die(json_encode(['status' => 'error', 'message' => "Connection failed: " . $conn->connect_error]));
 }
 
 // Set character set to UTF-8
@@ -29,8 +29,9 @@ function sanitizeInput($data) {
 
 // Success message for direct access
 if (basename($_SERVER['PHP_SELF']) === 'db_connect.php') {
+    header('Content-Type: application/json');
     echo json_encode(['status' => 'success', 'message' => 'Database connection successful']);
-} else {
-    // Return connection silently for includes
+    exit;
 }
+// Return connection silently for includes
 ?>
