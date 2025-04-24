@@ -71,6 +71,12 @@ export const departmentServices = [
     icon: <HelpCircle className="w-10 h-10 text-govt-blue" />,
     type: "general-help",
   },
+  {
+    title: "Emergency Services",
+    description: "Medical emergencies or urgent assistance needed.",
+    icon: <AmbulanceIcon className="w-10 h-10 text-red-600" />,
+    type: "emergency",
+  }
 ];
 
 export const departmentNames = {
@@ -82,12 +88,24 @@ export const departmentNames = {
   "property-damage": "Property/Building",
   "traffic-signals": "Traffic Signals",
   "general-help": "Help/Other",
+  "emergency": "Emergency Services"
 };
 
 const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
   const navigate = useNavigate();
 
   const handleIssueSelect = (issueType: string) => {
+    if (issueType === "emergency") {
+      toast.info("Calling emergency services: 108", {
+        duration: 5000,
+        action: {
+          label: "Call",
+          onClick: () => window.open("tel:108"),
+        },
+      });
+      return;
+    }
+    
     if (onIssueSelect) {
       onIssueSelect(issueType);
       return;
@@ -111,18 +129,24 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onIssueSelect }) => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {departmentServices.map((service, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+            <Card key={index} className={`hover:shadow-lg transition-shadow duration-300 ${service.type === 'emergency' ? 'border-red-500' : ''}`}>
               <CardHeader>
                 <div className="mb-4 flex justify-center">{service.icon}</div>
-                <CardTitle className="text-govt-blue text-center">{service.title}</CardTitle>
+                <CardTitle className={`text-center ${service.type === 'emergency' ? 'text-red-600' : 'text-govt-blue'}`}>
+                  {service.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 mb-4">{service.description}</CardDescription>
                 <Button
-                  className="w-full bg-govt-orange hover:bg-opacity-90 hover:scale-105 transition-all"
+                  className={`w-full hover:scale-105 transition-all ${
+                    service.type === 'emergency' 
+                      ? 'bg-red-600 hover:bg-red-700' 
+                      : 'bg-govt-orange hover:bg-opacity-90'
+                  }`}
                   onClick={() => handleIssueSelect(service.type)}
                 >
-                  Report Issue
+                  {service.type === 'emergency' ? 'Call Emergency' : 'Report Issue'}
                 </Button>
               </CardContent>
             </Card>
