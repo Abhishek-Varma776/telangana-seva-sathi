@@ -27,7 +27,10 @@ function sanitizeInput($data) {
     return $data;
 }
 
-// Return connection status
-echo "Database connection successful";
+// Success message for direct access
+if (basename($_SERVER['PHP_SELF']) === 'db_connect.php') {
+    echo json_encode(['status' => 'success', 'message' => 'Database connection successful']);
+} else {
+    // Return connection silently for includes
+}
 ?>
-
