@@ -30,3 +30,4 @@ function sanitizeInput($data) {
 // Return connection status
 echo "Database connection successful";
 ?>
+

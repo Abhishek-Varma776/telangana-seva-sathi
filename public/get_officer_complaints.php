@@ -142,3 +142,4 @@ echo json_encode([
 $stmt->close();
 $conn->close();
 ?>
+
