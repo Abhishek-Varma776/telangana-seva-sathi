@@ -29,14 +29,32 @@ try {
         }
     }
     
+    // Check if citizens table exists and get a sample user
+    $citizensTableExists = false;
+    $sampleUserEmail = null;
+    $result = $conn->query("SHOW TABLES LIKE 'citizens'");
+    if ($result->num_rows > 0) {
+        $citizensTableExists = true;
+        $sampleResult = $conn->query("SELECT email FROM citizens LIMIT 1");
+        if ($sampleResult && $row = $sampleResult->fetch_assoc()) {
+            $sampleUserEmail = $row['email'];
+        }
+    }
+    
     echo json_encode([
         'status' => 'success',
         'message' => 'Database connection successful',
         'database' => 'telangana_seva_sathi',
+        'php_version' => PHP_VERSION,
+        'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
         'tables' => [
             'officers' => [
                 'exists' => $tableExists,
                 'count' => $officersCount
+            ],
+            'citizens' => [
+                'exists' => $citizensTableExists,
+                'sample_email' => $sampleUserEmail
             ]
         ]
     ]);

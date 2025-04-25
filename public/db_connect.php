@@ -6,6 +6,9 @@ $username = "root";
 $password = "";
 $dbname = "telangana_seva_sathi";
 
+// Set content type to JSON for all responses from this file
+header('Content-Type: application/json');
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -29,7 +32,6 @@ function sanitizeInput($data) {
 
 // Success message for direct access
 if (basename($_SERVER['PHP_SELF']) === 'db_connect.php') {
-    header('Content-Type: application/json');
     echo json_encode(['status' => 'success', 'message' => 'Database connection successful']);
     exit;
 }

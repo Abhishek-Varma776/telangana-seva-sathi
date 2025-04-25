@@ -22,15 +22,28 @@ document.addEventListener('DOMContentLoaded', () => {
           options.body = JSON.stringify(data);
         }
 
+        console.log(`Sending request to: ${this.baseUrl}/${endpoint}`, options);
         const response = await fetch(`${this.baseUrl}/${endpoint}`, options);
+        console.log(`Response status: ${response.status}`);
         
         // Check if response is JSON
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           const result = await response.json();
+          console.log('Response data:', result);
           return result;
         } else {
-          console.error('Non-JSON response received:', await response.text());
+          const responseText = await response.text();
+          console.error('Non-JSON response received:', responseText);
+          
+          // Check if response contains PHP tags (indicating PHP is not being executed)
+          if (responseText.includes('<?php') || responseText.includes('<?=')) {
+            return { 
+              status: 'error', 
+              message: 'PHP script is not being executed. Please check server configuration.' 
+            };
+          }
+          
           return { 
             status: 'error', 
             message: 'Server returned an invalid response format. Please check server configuration.' 
@@ -121,9 +134,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
-          return await response.json();
+          const result = await response.json();
+          console.log('FormData response:', result);
+          return result;
         } else {
-          console.error('Non-JSON response received:', await response.text());
+          const responseText = await response.text();
+          console.error('Non-JSON response received:', responseText);
+          
+          // Check if response contains PHP tags (indicating PHP is not being executed)
+          if (responseText.includes('<?php') || responseText.includes('<?=')) {
+            return { 
+              status: 'error', 
+              message: 'PHP script is not being executed. Please check server configuration.' 
+            };
+          }
+          
           return { 
             status: 'error', 
             message: 'Server returned an invalid response format. Please check server configuration.' 
@@ -140,4 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.apiConnect = window.apiConnect;
   
   console.log("API Bridge initialized successfully");
+  
+  // Test database connection immediately
+  window.apiConnect.fetchApi('test_connection.php')
+    .then(response => {
+      console.log("Database connection test:", response);
+    })
+    .catch(error => {
+      console.error("Database connection test failed:", error);
+    });
 });

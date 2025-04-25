@@ -14,6 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get data from request
 $data = json_decode(file_get_contents('php://input'), true);
+if ($data === null) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid JSON data received']);
+    exit;
+}
 
 // Check if all required fields are present
 $requiredFields = ['name', 'email', 'phone', 'aadhar', 'address', 'district', 'pincode', 'password'];
