@@ -1,4 +1,3 @@
-
 // API Bridge to connect React frontend with PHP backend
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize the bridge
@@ -8,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Flag to indicate if we're using mock data (PHP not executing)
     useMockData: false,
+    
+    // Local storage keys
+    LOCAL_STORAGE_USERS_KEY: 'telangana_mock_users',
     
     // Mock data for testing when PHP isn't executing
     mockData: {
@@ -53,6 +55,56 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
 
+    // Initialize user data from localStorage
+    initUserData() {
+      try {
+        // Try to load saved users from localStorage
+        const savedUsers = localStorage.getItem(this.LOCAL_STORAGE_USERS_KEY);
+        if (savedUsers) {
+          const parsedUsers = JSON.parse(savedUsers);
+          // Merge with existing mock users
+          this.mockData.login = { ...this.mockData.login, ...parsedUsers };
+          console.log('Loaded registered users from localStorage:', Object.keys(parsedUsers));
+        }
+      } catch (error) {
+        console.error('Error loading users from localStorage:', error);
+      }
+    },
+
+    // Save registered user to localStorage for mock logins
+    saveRegisteredUser(userData) {
+      try {
+        // First load existing users
+        const savedUsers = localStorage.getItem(this.LOCAL_STORAGE_USERS_KEY) || '{}';
+        const users = JSON.parse(savedUsers);
+        
+        // Create mock password hash (simulating password_hash in PHP)
+        const mockHash = `mock_hash_${userData.password}`;
+        
+        // Add new user
+        users[userData.email] = {
+          status: 'success',
+          message: 'Login successful',
+          user: {
+            id: Date.now(), // Generate a mock ID based on timestamp
+            name: userData.name,
+            email: userData.email,
+            password: mockHash
+          }
+        };
+        
+        // Save back to localStorage
+        localStorage.setItem(this.LOCAL_STORAGE_USERS_KEY, JSON.stringify(users));
+        
+        // Update current session mock data
+        this.mockData.login[userData.email] = users[userData.email];
+        
+        console.log('Saved registered user for mock login:', userData.email);
+      } catch (error) {
+        console.error('Error saving registered user to localStorage:', error);
+      }
+    },
+
     // Generic fetch request with error handling
     async fetchApi(endpoint, method = 'GET', data = null, headers = {}) {
       // If we've detected PHP isn't executing and we're using mock data
@@ -62,14 +114,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // For login endpoint
         if (endpoint === 'citizen_login.php' && method === 'POST') {
           const email = data?.email;
+          // Check if we have this user in our mock data
           if (this.mockData.login[email]) {
-            return this.mockData.login[email];
+            const user = this.mockData.login[email];
+            // Simple password verification for mock data
+            if (data?.password && user.user.password) {
+              // If the mock hash matches our format and contains the password
+              if (user.user.password.startsWith('mock_hash_') && 
+                  user.user.password === `mock_hash_${data.password}`) {
+                // Remove password from response
+                const response = {...user};
+                delete response.user.password;
+                return response;
+              }
+              return { status: 'error', message: 'Invalid credentials' };
+            }
+            return user;
           }
           return { status: 'error', message: 'Invalid credentials' };
         }
         
         // For registration endpoint
         if (endpoint === 'citizen_register.php' && method === 'POST') {
+          // Save the registration data for future mock logins
+          this.saveRegisteredUser(data);
           return this.mockData.register;
         }
         
@@ -284,6 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Initialize user data from localStorage
+  window.apiConnect.initUserData();
+
   // Export to window for global access
   window.apiConnect = window.apiConnect;
   
@@ -304,11 +375,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (text.includes('<?php')) {
           console.error("PHP is not executing - switching to mock data mode");
           window.apiConnect.useMockData = true;
+          window.apiConnect.initUserData();
         }
       }
     })
     .catch(err => {
       console.error("Test connection failed:", err);
       window.apiConnect.useMockData = true;
+      window.apiConnect.initUserData();
     });
 });
