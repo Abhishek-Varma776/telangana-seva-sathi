@@ -1,10 +1,10 @@
 
 <?php
+// Set header to accept JSON requests first thing
+header('Content-Type: application/json');
+
 // Include database connection
 require_once 'db_connect.php';
-
-// Set header to accept JSON requests
-header('Content-Type: application/json');
 
 // Check if request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -41,12 +41,18 @@ $password = password_hash($data['password'], PASSWORD_DEFAULT); // Hash password
 // Check if email already exists
 $checkSql = "SELECT id FROM citizens WHERE email = ? OR aadhar = ? LIMIT 1";
 $checkStmt = $conn->prepare($checkSql);
+if (!$checkStmt) {
+    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $conn->error]);
+    exit;
+}
+
 $checkStmt->bind_param("ss", $email, $aadhar);
 $checkStmt->execute();
 $checkStmt->store_result();
 
 if ($checkStmt->num_rows > 0) {
     echo json_encode(['status' => 'error', 'message' => 'Email or Aadhar number already registered']);
+    $checkStmt->close();
     exit;
 }
 $checkStmt->close();
@@ -57,6 +63,11 @@ $sql = "INSERT INTO citizens (name, email, phone, aadhar, address, district, pin
 
 // Prepare statement
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("ssssssss", $name, $email, $phone, $aadhar, $address, $district, $pincode, $password);
 
 // Execute statement

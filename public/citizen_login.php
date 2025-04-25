@@ -1,10 +1,10 @@
 
 <?php
+// Set header to accept JSON requests first thing
+header('Content-Type: application/json');
+
 // Include database connection
 require_once 'db_connect.php';
-
-// Set header to accept JSON requests
-header('Content-Type: application/json');
 
 // Check if request method is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -14,6 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get data from request
 $data = json_decode(file_get_contents('php://input'), true);
+
+// Check if JSON was parsed correctly
+if ($data === null) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid JSON data received']);
+    exit;
+}
 
 // Check if all required fields are present
 if (!isset($data['email']) || !isset($data['password'])) {
@@ -30,10 +36,18 @@ $sql = "SELECT id, name, email, password FROM citizens WHERE email = ?";
 
 // Prepare statement
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("s", $email);
 
 // Execute statement
-$stmt->execute();
+if (!$stmt->execute()) {
+    echo json_encode(['status' => 'error', 'message' => 'Execute error: ' . $stmt->error]);
+    exit;
+}
 
 // Bind result variables
 $stmt->bind_result($id, $name, $email, $hashedPassword);

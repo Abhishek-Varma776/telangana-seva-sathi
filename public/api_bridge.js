@@ -29,9 +29,28 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if response is JSON
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
-          const result = await response.json();
-          console.log('Response data:', result);
-          return result;
+          try {
+            const result = await response.json();
+            console.log('Response data:', result);
+            return result;
+          } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            const responseText = await response.text();
+            console.error('Raw response:', responseText);
+            
+            // Check if response contains PHP tags (indicating PHP is not being executed)
+            if (responseText.includes('<?php') || responseText.includes('<?=')) {
+              return { 
+                status: 'error', 
+                message: 'PHP script is not being executed. Please check server configuration.' 
+              };
+            } else {
+              return {
+                status: 'error',
+                message: 'Invalid JSON response from server'
+              };
+            }
+          }
         } else {
           const responseText = await response.text();
           console.error('Non-JSON response received:', responseText);
@@ -134,14 +153,31 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
-          const result = await response.json();
-          console.log('FormData response:', result);
-          return result;
+          try {
+            const result = await response.json();
+            console.log('FormData response:', result);
+            return result;
+          } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            const responseText = await response.text();
+            console.error('Raw response:', responseText);
+            
+            if (responseText.includes('<?php') || responseText.includes('<?=')) {
+              return { 
+                status: 'error', 
+                message: 'PHP script is not being executed. Please check server configuration.' 
+              };
+            } else {
+              return {
+                status: 'error',
+                message: 'Invalid JSON response from server'
+              };
+            }
+          }
         } else {
           const responseText = await response.text();
           console.error('Non-JSON response received:', responseText);
           
-          // Check if response contains PHP tags (indicating PHP is not being executed)
           if (responseText.includes('<?php') || responseText.includes('<?=')) {
             return { 
               status: 'error', 
@@ -170,6 +206,21 @@ document.addEventListener('DOMContentLoaded', () => {
   window.apiConnect.fetchApi('test_connection.php')
     .then(response => {
       console.log("Database connection test:", response);
+      
+      // Additional diagnostics if there's an issue
+      if (response.status === 'error') {
+        console.error("Database connection test failed:", response.message);
+        
+        // Try a simple fetch to see if PHP is executing at all
+        fetch('test_connection.php')
+          .then(res => res.text())
+          .then(text => {
+            console.log("Raw test_connection.php response:", text);
+          })
+          .catch(err => {
+            console.error("Failed to fetch test_connection.php:", err);
+          });
+      }
     })
     .catch(error => {
       console.error("Database connection test failed:", error);
