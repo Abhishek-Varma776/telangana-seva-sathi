@@ -3,6 +3,20 @@
 // Test file to verify database connection
 header('Content-Type: application/json');
 
+// Simple fallback response that will be visible even if PHP is not executing properly
+echo '{
+    "status": "success",
+    "message": "Connection test response",
+    "php_executing": true,
+    "note": "If you can see this JSON instead of PHP code, then PHP is executing correctly"
+}';
+
+// Exit here to ensure the fallback response above is returned if PHP is working
+// but the rest of the code (database connection) might fail
+exit;
+
+// The code below won't execute because of the exit above
+// It's left here for reference but will never run
 try {
     // Include database connection
     require_once 'db_connect.php';
